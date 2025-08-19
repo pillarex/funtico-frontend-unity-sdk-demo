@@ -7,6 +7,9 @@ using Cysharp.Threading.Tasks;
 public class FunticoManager : MonoBehaviour
 {
     public static FunticoManager Instance { get; private set; }
+    
+    [SerializeField] private string authClientId;
+    [SerializeField] private string env;
 
     [DllImport("__Internal")] private static extern void InitializeSDK(string authClientId, string env);
     [DllImport("__Internal")] private static extern void SignIn(string callbackUrl, string gameObjectName, int promiseId);
@@ -22,6 +25,7 @@ public class FunticoManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
+            Init(authClientId, env);
             DontDestroyOnLoad(gameObject);
         }
         else
@@ -115,37 +119,5 @@ public class FunticoManager : MonoBehaviour
             boolUtcs.TrySetException(exception);
         }
         _pendingPromises.Remove(promiseId);
-    }
-}
-4. MyGameLogic.cs (Example Usage)
-This script shows how to call the awaitable methods from the FunticoManager.
-C#
-using UnityEngine;
-using System;
-using Cysharp.Threading.Tasks;
-
-public class MyGameLogic : MonoBehaviour
-{
-    private async UniTaskVoid Start()
-    {
-        FunticoManager.Instance.Init("your-auth-client-id", "staging");
-        await AuthenticateAndPlay();
-    }
-
-    private async UniTask AuthenticateAndPlay()
-    {
-        try
-        {
-            await FunticoManager.Instance.SignInAsync("https://your-game.com/callback");
-            string userInfo = await FunticoManager.Instance.GetUserInfoAsync();
-            Debug.Log("Welcome, user: " + userInfo);
-
-            await FunticoManager.Instance.SaveScoreAsync(5000);
-            Debug.Log("High score saved!");
-        }
-        catch (Exception e)
-        {
-            Debug.LogError("Funtico process failed: " + e.Message);
-        }
     }
 }
