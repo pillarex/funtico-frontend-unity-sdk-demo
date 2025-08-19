@@ -3,19 +3,16 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using Cysharp.Threading.Tasks;
+using Newtonsoft.Json;
 
 public class FunticoManager : MonoBehaviour
 {
     public static FunticoManager Instance { get; private set; }
-    
-    [SerializeField] private string authClientId;
-    [SerializeField] private string env;
-
     [DllImport("__Internal")] private static extern void InitializeSDK(string authClientId, string env);
-    [DllImport("__Internal")] private static extern void SignIn(string callbackUrl, string gameObjectName, int promiseId);
+    [DllImport("__Internal")] private static extern void SignIn(string gameObjectName, int promiseId);
     [DllImport("__Internal")] private static extern void GetUserInfo(string gameObjectName, int promiseId);
     [DllImport("__Internal")] private static extern void SaveScore(int score, string gameObjectName, int promiseId);
-    [DllImport("__Internal")] private static extern void SignOut(string redirectUrl);
+    [DllImport("__Internal")] private static extern void SignOut();
 
     private int _nextPromiseId = 0;
     private readonly Dictionary<int, object> _pendingPromises = new Dictionary<int, object>();
@@ -25,7 +22,6 @@ public class FunticoManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            Init(authClientId, env);
             DontDestroyOnLoad(gameObject);
         }
         else
@@ -41,7 +37,7 @@ public class FunticoManager : MonoBehaviour
 #endif
     }
 
-    public UniTask SignInAsync(string callbackUrl)
+    public UniTask SignInAsync()
     {
 #if UNITY_EDITOR
         Debug.LogWarning("Funtico SDK >> Mock SignInAsync call in Editor.");
@@ -50,22 +46,37 @@ public class FunticoManager : MonoBehaviour
         var utcs = new UniTaskCompletionSource<bool>();
         int promiseId = _nextPromiseId++;
         _pendingPromises[promiseId] = utcs;
-        SignIn(callbackUrl, gameObject.name, promiseId);
+        SignIn(gameObject.name, promiseId);
         return utcs.Task;
 #endif
     }
 
-    public UniTask<string> GetUserInfoAsync()
+    public async UniTask<FunticoUser?> GetUserInfoAsync()
     {
 #if UNITY_EDITOR
         Debug.LogWarning("Funtico SDK >> Mock GetUserInfoAsync call in Editor.");
-        return UniTask.FromResult("{\"name\":\"EditorUser\"}");
+        return await UniTask.FromResult(new FunticoUser{UserName = "Editor", UserId = "123"});
 #else
         var utcs = new UniTaskCompletionSource<string>();
         int promiseId = _nextPromiseId++;
         _pendingPromises[promiseId] = utcs;
         GetUserInfo(gameObject.name, promiseId);
-        return utcs.Task;
+
+        // 1. Asynchronously wait for the JSON string result
+        string userJson = await utcs.Task;
+
+        // 2. Check for an empty result to avoid errors
+        if (string.IsNullOrEmpty(userJson))
+        {
+            Debug.LogError("Funtico SDK >> Received an empty user string.");
+            return await UniTask.FromResult<FunticoUser?>(null);
+        }
+
+        // 3. Deserialize the JSON using Newtonsoft.Json
+        FunticoUser user = JsonConvert.DeserializeObject<FunticoUser>(userJson);
+
+        // 4. Return the parsed object
+        return user;
 #endif
     }
 
@@ -83,10 +94,10 @@ public class FunticoManager : MonoBehaviour
 #endif
     }
 
-    public void DoSignOut(string redirectUrl)
+    public void DoSignOut()
     {
 #if !UNITY_EDITOR && UNITY_WEBGL
-        SignOut(redirectUrl);
+        SignOut();
 #endif
     }
 
@@ -119,5 +130,13 @@ public class FunticoManager : MonoBehaviour
             boolUtcs.TrySetException(exception);
         }
         _pendingPromises.Remove(promiseId);
+    }
+
+    public class FunticoUser
+    {
+        [JsonProperty("username")]
+        public string UserName { get; set; }
+        [JsonProperty("User_id")]
+        public string UserId { get; set; }
     }
 }

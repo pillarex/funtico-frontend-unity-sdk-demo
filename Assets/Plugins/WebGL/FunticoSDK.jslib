@@ -8,53 +8,63 @@ mergeInto(LibraryManager.library, {
       console.error("FunticoSDK is not loaded. Add the SDK <script> to your index.html.");
       return;
     }
-    window.funticoSDKInstance = new FunticoSDK.FunticoSDK({
+    funticoSDKInstance = new FunticoSDK({
       authClientId: authClientId,
       env: env
     });
     console.log("Funtico SDK Initialized.");
   },
 
-  SignIn: function(callbackUrlPtr, gameObjectNamePtr, promiseId) {
-    if (!funticoSDKInstance) return;
-    const callbackUrl = UTF8ToString(callbackUrlPtr);
+  SignIn: function(gameObjectNamePtr, promiseId) {
+    // Safety check for both the SDK and the Unity instance
+    if (!funticoSDKInstance || !myGameInstance) return;
     const gameObjectName = UTF8ToString(gameObjectNamePtr);
-    funticoSDKInstance.signInWithFuntico(callbackUrl)
+    
+    funticoSDKInstance.signInWithFuntico(window.location.href)
       .then(() => {
-        unityInstance.SendMessage(gameObjectName, 'ResolvePromise', `${promiseId}:true`);
+        // UPDATED to use myGameInstance
+        myGameInstance.SendMessage(gameObjectName, 'ResolvePromise', `${promiseId}:true`);
       })
       .catch(error => {
-        unityInstance.SendMessage(gameObjectName, 'RejectPromise', `${promiseId}:${JSON.stringify(error)}`);
+        // UPDATED to use myGameInstance
+        myGameInstance.SendMessage(gameObjectName, 'RejectPromise', `${promiseId}:${JSON.stringify(error)}`);
       });
   },
 
   GetUserInfo: function(gameObjectNamePtr, promiseId) {
-    if (!funticoSDKInstance) return;
+    // Safety check for both the SDK and the Unity instance
+    if (!funticoSDKInstance || !myGameInstance) return;
     const gameObjectName = UTF8ToString(gameObjectNamePtr);
+
     funticoSDKInstance.getUserInfo()
       .then(userInfo => {
-        unityInstance.SendMessage(gameObjectName, 'ResolvePromise', `${promiseId}:${JSON.stringify(userInfo)}`);
+        // UPDATED to use myGameInstance
+        myGameInstance.SendMessage(gameObjectName, 'ResolvePromise', `${promiseId}:${JSON.stringify(userInfo)}`);
       })
       .catch(error => {
-        unityInstance.SendMessage(gameObjectName, 'RejectPromise', `${promiseId}:${JSON.stringify(error)}`);
+        // UPDATED to use myGameInstance
+        myGameInstance.SendMessage(gameObjectName, 'RejectPromise', `${promiseId}:${JSON.stringify(error)}`);
       });
   },
 
   SaveScore: function(score, gameObjectNamePtr, promiseId) {
-    if (!funticoSDKInstance) return;
+    // Safety check for both the SDK and the Unity instance
+    if (!funticoSDKInstance || !myGameInstance) return;
     const gameObjectName = UTF8ToString(gameObjectNamePtr);
+    
     funticoSDKInstance.saveScore(score)
       .then(response => {
-        unityInstance.SendMessage(gameObjectName, 'ResolvePromise', `${promiseId}:${JSON.stringify(response)}`);
+        // UPDATED to use myGameInstance
+        myGameInstance.SendMessage(gameObjectName, 'ResolvePromise', `${promiseId}:${JSON.stringify(response)}`);
       })
       .catch(error => {
-        unityInstance.SendMessage(gameObjectName, 'RejectPromise', `${promiseId}:${JSON.stringify(error)}`);
+        // UPDATED to use myGameInstance
+        myGameInstance.SendMessage(gameObjectName, 'RejectPromise', `${promiseId}:${JSON.stringify(error)}`);
       });
   },
 
-  SignOut: function(redirectUrlPtr) {
+  SignOut: function() {
     if (!funticoSDKInstance) return;
-    const redirectUrl = UTF8ToString(redirectUrlPtr);
-    funticoSDKInstance.signOut(redirectUrl);
+    funticoSDKInstance.signOut(window.location.href);
   }
 });
