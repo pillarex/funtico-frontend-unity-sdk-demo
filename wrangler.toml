@@ -10,3 +10,7 @@ bucket_name = "unity-web"
 [observability]
 enabled = true
 head_sampling_rate = 1
+
+[[routes]]
+pattern = "unity.demo.gamejam.funtico.com"
+custom_domain = true
