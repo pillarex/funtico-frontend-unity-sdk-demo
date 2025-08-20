@@ -56,6 +56,7 @@ mergeInto(LibraryManager.library, {
       .then(response => {
         // UPDATED to use myGameInstance
         myGameInstance.SendMessage(gameObjectName, 'ResolvePromise', `${promiseId}:${JSON.stringify(response)}`);
+        window.alert('Score saved successfully!');
       })
       .catch(error => {
         // UPDATED to use myGameInstance
