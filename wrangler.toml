@@ -12,5 +12,5 @@ enabled = true
 head_sampling_rate = 1
 
 [[routes]]
-pattern = "unity.demo.gamejam.funtico.com"
+pattern = "unity.demo.gameloop.funtico.com"
 custom_domain = true
