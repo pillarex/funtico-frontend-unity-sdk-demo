@@ -74,8 +74,13 @@ public class FunticoSDKExample : MonoBehaviour
         Debug.LogError("SaveScore called.");
         if (int.TryParse(scoreInput.text, out int score))
         {
-            FunticoManager.Instance.SaveScoreAsync(score).Forget();
+            SendScoreAsync(score).Forget();
         }
+    }
+    private async UniTask SendScoreAsync(int score)
+    {
+        await FunticoManager.Instance.SaveScoreAsync(score);
+        FunticoManager.ShowAlert("Score saved successfully!");
     }
     #endregion
 

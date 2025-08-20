@@ -13,6 +13,7 @@ public class FunticoManager : MonoBehaviour
     [DllImport("__Internal")] private static extern void GetUserInfo(string gameObjectName, int promiseId);
     [DllImport("__Internal")] private static extern void SaveScore(int score, string gameObjectName, int promiseId);
     [DllImport("__Internal")] private static extern void SignOut();
+    [DllImport("__Internal")] public static extern void ShowAlert(string text);
 
     private int _nextPromiseId = 0;
     private readonly Dictionary<int, object> _pendingPromises = new Dictionary<int, object>();
@@ -100,6 +101,7 @@ public class FunticoManager : MonoBehaviour
         SignOut();
 #endif
     }
+
 
     public void ResolvePromise(string result)
     {

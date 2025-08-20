@@ -56,7 +56,6 @@ mergeInto(LibraryManager.library, {
       .then(response => {
         // UPDATED to use myGameInstance
         myGameInstance.SendMessage(gameObjectName, 'ResolvePromise', `${promiseId}:${JSON.stringify(response)}`);
-        window.alert('Score saved successfully!');
       })
       .catch(error => {
         // UPDATED to use myGameInstance
@@ -67,5 +66,10 @@ mergeInto(LibraryManager.library, {
   SignOut: function() {
     if (!funticoSDKInstance) return;
     funticoSDKInstance.signOut(window.location.href);
-  }
+  },
+
+  ShowAlert: function(messagePtr) {
+    const message = UTF8ToString(messagePtr);
+    alert(message);
+  },
 });
