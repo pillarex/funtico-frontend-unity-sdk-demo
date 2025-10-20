@@ -1,1 +1,0 @@
-var funticoSDKInstance = null;
