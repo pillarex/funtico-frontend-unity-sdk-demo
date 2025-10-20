@@ -1,0 +1,55 @@
+name: Release UPM Package
+
+# This action is manually triggered from the Actions tab in your repository
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'The new version number (e.g., 1.0.1)'
+        required: true
+        type: string
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      # 1. Check out the repository's code
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2. Update the package.json file with the new version
+      - name: Update package.json version
+        run: |
+          jq '.version = "${{ github.event.inputs.version }}"'./Assets/FunticoSDK/package.json > tmp.$$.json && mv tmp.$$.json./Assets/FunticoSDK/package.json
+          echo "package.json updated to version ${{ github.event.inputs.version }}"
+
+      # 3. Sync the AuthSample directory before committing
+      - name: Sync AuthSample directory
+        run: |
+          # Remove the old sample directory to ensure a clean state
+          rm -rf./Assets/FunticoSDK/Samples~/AuthSample
+          # Copy the new sample directory from the project's root Assets folder
+          cp -r./Assets/AuthSample./Assets/FunticoSDK/Samples~/AuthSample
+          echo "AuthSample directory synced."
+
+      # 4. Commit the updated package.json and synced sample
+      - name: Commit changes
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          # Stage all changes within the package directory
+          git add./Assets/FunticoSDK
+          git commit -m "chore: Release version ${{ github.event.inputs.version }}"
+          echo "Committed release files"
+
+      # 5. Create a new Git tag for the release
+      - name: Create Git tag
+        run: |
+          git tag "v${{ github.event.inputs.version }}"
+          echo "Created tag v${{ github.event.inputs.version }}"
+
+      # 6. Push the commit and the new tag to the repository
+      - name: Push changes and tag
+        run: |
+          git push
+          git push --tags
