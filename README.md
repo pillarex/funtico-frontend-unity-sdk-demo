@@ -210,6 +210,7 @@ createUnityInstance(canvas, config, (progress) => {
   myGameInstance = unityInstance; // <-- Add this line
   //... other logic
 });
+```
 
 ### 💡 Editor Mocking
 
@@ -249,4 +250,3 @@ php -S localhost:3000
 ```
 
 Then, open your browser to http://localhost:3000.
-```
