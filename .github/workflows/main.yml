@@ -29,7 +29,7 @@ jobs:
           # Remove the old sample directory to ensure a clean state
           rm -rf Assets/FunticoSDK/Samples~/AuthSample
           # Copy the new sample directory from the project's root Assets folder
-          cp -r Assets/AuthSample./Assets/FunticoSDK/Samples~/AuthSample
+          cp -r Assets/AuthSample Assets/FunticoSDK/Samples~/AuthSample
           echo "AuthSample directory synced."
 
       # 4. Commit the updated package.json and synced sample
