@@ -44,11 +44,33 @@ php -S localhost:3000
 ```
 
 ### Additional info
-If you wish to use your own template you need to add the following to your `index.html` file:
+If you wish to use your own template you need modify your `index.html` file:
+
+* Add the following in head section:
 ```html
-<script src="https://funtico-frontend-js-sdk.pages.dev/funtico-sdk.min.js">
+<script src="https://funtico-frontend-js-sdk.pages.dev/funtico-sdk.min.js"> </script>
 ```
-and in the createUnityInstance assign `myGameInstance = unityInstance;`
+
+* Add the following:
+```html
+    var myGameInstance = null;
+```
+above given line:
+```html
+    var script = document.createElement("script");
+```
+
+* Add the following:
+```html
+    myGameInstance = unityInstance;
+```
+inside of 'then' of createUnityInstance call:
+```html
+        createUnityInstance(canvas, config, (progress) => {
+          document.querySelector("#unity-progress-bar-full").style.width = 100 * progress + "%";
+              }).then((unityInstance) => {
+                myGameInstance = unityInstance;
+```
 
 Open your browser to `http://localhost:3000`
 
