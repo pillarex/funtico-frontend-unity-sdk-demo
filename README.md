@@ -8,6 +8,8 @@ Go to Window → Package Manager in the Unity menu.
 In the Package Manager window, click the “+” button → choose “Add package from Git URL…”, then add the following URLs one by one:
 ```html
 https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask
+```
+```html
 https://github.com/pillarex/funtico-frontend-unity-sdk-demo.git?path=Assets/FunticoSDK
 ```
 4. (Optional): Import the sample project
