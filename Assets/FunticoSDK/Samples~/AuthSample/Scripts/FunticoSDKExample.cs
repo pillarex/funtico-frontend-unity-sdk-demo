@@ -1,7 +1,9 @@
 using System;
 using Cysharp.Threading.Tasks;
 using FunticoSDK.Runtime.Scripts;
+using FunticoSDK.Runtime.Scripts.Models;
 using JetBrains.Annotations;
+using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.PlayerLoop;
 using UnityEngine.SceneManagement;
@@ -17,7 +19,7 @@ public class FunticoSDKExample : MonoBehaviour
     [SerializeField] private Text userNameText;
     [SerializeField] private Text userIDText;
     [SerializeField] private InputField scoreInput;
-    [CanBeNull] private static FunticoManager.FunticoUser userName = null;
+    [CanBeNull] private static FunticoUser userName = null;
     private void Start()
     {
         if (userName == null)
@@ -78,6 +80,22 @@ public class FunticoSDKExample : MonoBehaviour
             SendScoreAsync(score).Forget();
         }
     }
+
+    public void GetLeaderboard()
+    {
+        Debug.LogError("GetLeaderboard called.");
+        FetchLeaderboard().Forget();
+    }
+
+    private async UniTask FetchLeaderboard()
+    {
+        var entries = await FunticoManager.Instance.GetLeaderboardAsync();
+        foreach (var entry in entries)
+        {
+            Debug.LogError(JsonConvert.SerializeObject(entry, Formatting.Indented));
+        }
+    }
+
     private async UniTask SendScoreAsync(int score)
     {
         await FunticoManager.Instance.SaveScoreAsync(score);
