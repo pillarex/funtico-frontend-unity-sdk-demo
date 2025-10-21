@@ -2,7 +2,7 @@
     "name": "com.funtico.unitysdk",
     "displayName": "GameLoop Funtico UnitySDK",
     "author": { "name": "Funtico", "url": "https://funtico.com/" },
-    "version": "1.0.0",
+    "version": "1.0.1",
     "unity": "2021.3",
     "description": "GameLoop Funtico SDK.",
     "keywords": [ "GameLoop", "Funtico" ],
@@ -16,8 +16,8 @@
         "path": "Samples~/AuthSample"
       },
       {
-        "displayName": "Webgl Template",
-        "description": "Example of auth flow, and sending player result to platform.",
+        "displayName": "WebGL Template",
+        "description": "WebGL template you can use.",
         "path": "Samples~/Funtico WebGL Template"
       }
     ]
