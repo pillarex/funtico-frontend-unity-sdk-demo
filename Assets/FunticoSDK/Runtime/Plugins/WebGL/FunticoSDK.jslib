@@ -22,11 +22,9 @@ mergeInto(LibraryManager.library, {
     
     funticoSDKInstance.signInWithFuntico(window.location.href)
       .then(() => {
-        // UPDATED to use myGameInstance
         myGameInstance.SendMessage(gameObjectName, 'ResolvePromise', `${promiseId}:true`);
       })
       .catch(error => {
-        // UPDATED to use myGameInstance
         myGameInstance.SendMessage(gameObjectName, 'RejectPromise', `${promiseId}:${JSON.stringify(error)}`);
       });
   },
@@ -38,11 +36,9 @@ mergeInto(LibraryManager.library, {
 
     funticoSDKInstance.getUserInfo()
       .then(userInfo => {
-        // UPDATED to use myGameInstance
         myGameInstance.SendMessage(gameObjectName, 'ResolvePromise', `${promiseId}:${JSON.stringify(userInfo)}`);
       })
       .catch(error => {
-        // UPDATED to use myGameInstance
         myGameInstance.SendMessage(gameObjectName, 'RejectPromise', `${promiseId}:${JSON.stringify(error)}`);
       });
   },
@@ -54,11 +50,23 @@ mergeInto(LibraryManager.library, {
     
     funticoSDKInstance.saveScore(score)
       .then(response => {
-        // UPDATED to use myGameInstance
         myGameInstance.SendMessage(gameObjectName, 'ResolvePromise', `${promiseId}:${JSON.stringify(response)}`);
       })
       .catch(error => {
-        // UPDATED to use myGameInstance
+        myGameInstance.SendMessage(gameObjectName, 'RejectPromise', `${promiseId}:${JSON.stringify(error)}`);
+      });
+  },
+
+  GetLeaderboard: function(gameObjectNamePtr, promiseId) {
+    // Safety check for both the SDK and the Unity instance
+    if (!funticoSDKInstance || !myGameInstance) return;
+    const gameObjectName = UTF8ToString(gameObjectNamePtr);
+
+    funticoSDKInstance.getLeaderboard()
+      .then(leaderboardData => {
+        myGameInstance.SendMessage(gameObjectName, 'ResolvePromise', `${promiseId}:${JSON.stringify(leaderboardData)}`);
+      })
+      .catch(error => {
         myGameInstance.SendMessage(gameObjectName, 'RejectPromise', `${promiseId}:${JSON.stringify(error)}`);
       });
   },
