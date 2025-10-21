@@ -30,13 +30,63 @@ After installation, open the Funtico SDK package page in the Package Manager and
 
 This guide will walk you through integrating the Funtico SDK into your Unity WebGL game. We'll cover everything from initial setup to signing in users and saving scores, all with practical code examples.
 
-### Getting Started: Scene Setup
+### Getting Started: 
+
+#### 1. Scene Setup
 
 Before you can call any SDK functions, you need to add the FunticoManager to your scene. This is a crucial step, as this component handles all the communication with the Funtico backend.
 Create a Manager Object: In your first scene (like a loading or main menu scene), create a new empty GameObject. A good name for it is FunticoManager.
 Add the Script: Attach the FunticoManager.cs script to the GameObject you just created.
 Make it Persistent: The FunticoManager is a singleton that needs to persist across scene loads. The script handles this for you with DontDestroyOnLoad(gameObject), so you're all set!
 That's it for the scene setup. Now you can access the SDK from anywhere in your code using FunticoManager.Instance.
+
+#### 2. Setting up the WebGL Template
+
+#### Option A: Use Our Pre-configured Template (Recommended)
+The easiest way is to use the template that comes with the Funtico SDK package, which is already set up for you.
+
+In the Unity Editor, go to Edit > Project Settings > Player.
+
+Select the WebGL tab.
+
+Open the Resolution and Presentation section.
+
+From the WebGL Template dropdown menu, select the Funtico template.
+
+Now, when you build your project, Unity will use this template automatically.
+
+#### Option B: Modify Your Own Custom Template
+
+If you are using your own WebGL template, you'll need to make a few manual edits to your index.html file. These changes are necessary to ensure the Funtico JavaScript SDK (which runs in the browser) can find and communicate with your Unity game instance.
+Here are the three required steps:
+
+##### 1. Add the Funtico SDK Script
+In the <head> section of your index.html, add the following line to load the Funtico JavaScript library:
+```HTML
+<script src="https://funtico-frontend-js-sdk.pages.dev/funtico-sdk.min.js"></script>
+```
+
+##### 2. Create a Global Instance Variable
+The Funtico SDK needs a global variable to find your game. In your index.html, locate this line:
+```HTML
+var script = document.createElement("script");
+```
+Just before it, add the following line to declare the variable:
+```HTML
+var myGameInstance = null;
+```
+
+##### 3. Assign the Unity Instance
+Finally, you need to assign the created Unity game instance to the variable from the previous step. Find the createUnityInstance function call in your file. Inside its .then() block, add myGameInstance = unityInstance;.
+It will look like this:
+```HTML
+createUnityInstance(canvas, config, (progress) => {
+  //... progress bar logic
+}).then((unityInstance) => {
+  myGameInstance = unityInstance; // <-- Add this line
+  //... other logic
+});
+```
 
 ### 🎮 SDK Usage
 
@@ -178,38 +228,6 @@ public void LogOut()
     FunticoManager.Instance.DoSignOut();
     // Return to the main menu or login screen
 }
-```
-
-#### 6. Using a Custom HTML Template
-
-If you are using your own WebGL template, you'll need to make a few manual edits to your index.html file. These changes are necessary to ensure the Funtico JavaScript SDK (which runs in the browser) can find and communicate with your Unity game instance.
-Here are the three required steps:
-##### 1. Add the Funtico SDK Script
-In the <head> section of your index.html, add the following line to load the Funtico JavaScript library:
-```HTML
-<script src="https://funtico-frontend-js-sdk.pages.dev/funtico-sdk.min.js"></script>
-```
-
-##### 2. Create a Global Instance Variable
-The Funtico SDK needs a global variable to find your game. In your index.html, locate this line:
-```HTML
-var script = document.createElement("script");
-```
-Just before it, add the following line to declare the variable:
-```HTML
-var myGameInstance = null;
-```
-
-##### 3. Assign the Unity Instance
-Finally, you need to assign the created Unity game instance to the variable from the previous step. Find the createUnityInstance function call in your file. Inside its .then() block, add myGameInstance = unityInstance;.
-It will look like this:
-```HTML
-createUnityInstance(canvas, config, (progress) => {
-  //... progress bar logic
-}).then((unityInstance) => {
-  myGameInstance = unityInstance; // <-- Add this line
-  //... other logic
-});
 ```
 
 ### 💡 Editor Mocking
