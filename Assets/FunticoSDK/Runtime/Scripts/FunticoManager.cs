@@ -17,7 +17,7 @@ namespace FunticoSDK.Runtime.Scripts
         [DllImport("__Internal")] private static extern void SaveScore(int score, string gameObjectName, int promiseId);
         [DllImport("__Internal")] private static extern void SignOut();
         [DllImport("__Internal")] private static extern void GetLeaderboard(string gameObjectName, int promiseId);
-        [DllImport("__Internal")] public static extern void ShowAlert(string text);
+        [DllImport("__Internal")] private static extern void ShowAlert(string text);
 
         private int _nextPromiseId = 0;
         private readonly Dictionary<int, object> _pendingPromises = new Dictionary<int, object>();
@@ -39,6 +39,15 @@ namespace FunticoSDK.Runtime.Scripts
         {
 #if !UNITY_EDITOR && UNITY_WEBGL
         InitializeSDK(authClientId, env);
+#endif
+        }
+
+        public void DisplayAlert(string text)
+        {
+#if UNITY_EDITOR
+            Debug.LogWarning($"Funtico SDK >> Mock Alert: {text}");
+#else
+            ShowAlert(text);
 #endif
         }
 
