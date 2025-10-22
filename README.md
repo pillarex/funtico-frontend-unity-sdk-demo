@@ -45,15 +45,17 @@ That's it for the scene setup. Now you can access the SDK from anywhere in your 
 #### Option A: Use Our Pre-configured Template (Recommended)
 The easiest way is to use the template that comes with the Funtico SDK package, which is already set up for you.
 
-In the Unity Editor, go to Edit > Project Settings > Player.
+##### 1. To get it:
+* use UPM packages sample - import WebGL Template sample from our package
+* move FunticoSDK dir from Assets/Samples/Gameloop Funtico UnitySDK/x.x.x/WebGL Template/ to WebGLTemplates
+* if it is not appearing in Presentation section you might to need restart Unity
 
-Select the WebGL tab.
-
-Open the Resolution and Presentation section.
-
-From the WebGL Template dropdown menu, select the Funtico template.
-
-Now, when you build your project, Unity will use this template automatically.
+##### 2. How to set That template:
+* In the Unity Editor, go to Edit > Project Settings > Player.
+* Select the WebGL tab.
+* Open the Resolution and Presentation section.
+* From the WebGL Template dropdown menu, select the Funtico template.
+* Now, when you build your project, Unity will use this template automatically.
 
 #### Option B: Modify Your Own Custom Template
 
