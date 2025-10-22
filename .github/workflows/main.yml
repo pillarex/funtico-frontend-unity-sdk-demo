@@ -8,6 +8,11 @@ on:
         description: 'The new version number (e.g., 1.0.1)'
         required: true
         type: string
+        
+      branch:
+        description: 'New branch name (e.g., release/1.0.1)'
+        required: true
+        type: string
 
 jobs:
   release:
@@ -23,43 +28,69 @@ jobs:
           jq '.version = "${{ github.event.inputs.version }}"'Assets/FunticoSDK/package.json > tmp.$$.json && mv tmp.$$.json Assets/FunticoSDK/package.json
           echo "package.json updated to version ${{ github.event.inputs.version }}"
 
-      # 3. Sync the AuthSample directory before committing
-      - name: Sync AuthSample directory
+      # 3. Sync the Sample directories
+      - name: Sync Sample directories
         run: |
-          # Remove the old sample directory to ensure a clean state
+          # Sync AuthSample
           rm -rf Assets/FunticoSDK/Samples~/AuthSample
-          # Copy the new sample directory from the project's root Assets folder
           cp -r Assets/AuthSample Assets/FunticoSDK/Samples~/AuthSample
           echo "AuthSample directory synced."
 
-      # 4. Commit and push changes if they exist
-      - name: Commit and Push Changes
+          # Sync WebGLTemplates
+          rm -rf "Assets/FunticoSDK/Samples~/Funtico WebGl Template"
+          cp -r Assets/WebGLTemplates "Assets/FunticoSDK/Samples~/Funtico WebGl Template"
+          echo "WebGLTemplates directory synced."
+
+# 4. Create new branch, commit, and push changes
+      - name: Create Branch, Commit, and Push
+        id: commit_push # Add an ID to reference this step's outputs
         run: |
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          
+          echo "Creating and switching to new branch: ${{ github.event.inputs.branch }}"
+          git checkout -b ${{ github.event.inputs.branch }}
+          
           git add Assets/FunticoSDK
           
           # Commit and push only if there are staged changes
           if ! git diff --staged --quiet; then
-          echo "Changes detected. Committing and pushing."
+            echo "Changes detected. Committing and pushing."
             git commit -m "chore: Release version ${{ github.event.inputs.version }}"
-            git push
+            git push --set-upstream origin ${{ github.event.inputs.branch }}
+            echo "changes_committed=true" >> $GITHUB_OUTPUT
           else
             echo "No file changes to commit."
+            echo "changes_committed=false" >> $GITHUB_OUTPUT
           fi
 
       # 5. Create and push tag if it doesn't already exist
       - name: Create and Push Tag
+        if: steps.commit_push.outputs.changes_committed == 'true'
         run: |
           TAG="v${{ github.event.inputs.version }}"
           
           # Check if the tag already exists on the remote repository
           if git ls-remote --tags origin | grep -q "refs/tags/$TAG"; then
             echo "Tag $TAG already exists. Skipping tag creation."
-            exit 0
+          else
+            # If the tag doesn't exist, create and push it
+            echo "Creating and pushing new tag: $TAG"
+            git tag "$TAG"
+            git push origin "$TAG"
           fi
-          
-          # If the tag doesn't exist, create and push it
-          echo "Creating and pushing new tag: $TAG"
-          git tag "$TAG"
-          git push origin "$TAG"
+
+      # 6. Create a Pull Request (only if changes were committed)
+      - name: Create Pull Request
+        if: steps.commit_push.outputs.changes_committed == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # IMPORTANT: Change 'main' to 'master' if your default branch is named 'master'
+          BASE_BRANCH: main 
+        run: |
+          echo "Creating Pull Request..."
+          gh pr create \
+            --base $BASE_BRANCH \
+            --head ${{ github.event.inputs.branch }} \
+            --title "Release: Version ${{ github.event.inputs.version }}" \
+            --body "This PR contains the changes for release v${{ github.event.inputs.version }}. Please review and merge."
