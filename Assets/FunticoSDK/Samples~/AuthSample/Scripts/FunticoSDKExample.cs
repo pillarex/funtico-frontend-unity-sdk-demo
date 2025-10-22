@@ -99,7 +99,7 @@ public class FunticoSDKExample : MonoBehaviour
     private async UniTask SendScoreAsync(int score)
     {
         await FunticoManager.Instance.SaveScoreAsync(score);
-        FunticoManager.ShowAlert("Score saved successfully!");
+        FunticoManager.Instance.DisplayAlert("Score saved successfully!");
     }
     #endregion
 
