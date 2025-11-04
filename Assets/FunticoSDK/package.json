@@ -1,24 +1,30 @@
 {
-    "name": "com.funtico.unitysdk",
-    "displayName": "GameLoop Funtico UnitySDK",
-    "author": { "name": "Funtico", "url": "https://funtico.com/" },
-    "version": "1.0.1",
-    "unity": "2021.3",
-    "description": "GameLoop Funtico SDK.",
-    "keywords": [ "GameLoop", "Funtico" ],
-    "dependencies": {
-      "com.unity.nuget.newtonsoft-json": "3.2.1"
+  "name": "com.funtico.unitysdk",
+  "displayName": "GameLoop Funtico UnitySDK",
+  "author": {
+    "name": "Funtico",
+    "url": "https://funtico.com/"
+  },
+  "version": "1.0.3",
+  "unity": "2021.3",
+  "description": "GameLoop Funtico SDK.",
+  "keywords": [
+    "GameLoop",
+    "Funtico"
+  ],
+  "dependencies": {
+    "com.unity.nuget.newtonsoft-json": "3.2.1"
+  },
+  "samples": [
+    {
+      "displayName": "Sample",
+      "description": "Example of auth flow, and sending player result to platform.",
+      "path": "Samples~/AuthSample"
     },
-    "samples": [
-      {
-        "displayName": "Sample",
-        "description": "Example of auth flow, and sending player result to platform.",
-        "path": "Samples~/AuthSample"
-      },
-      {
-        "displayName": "WebGL Template",
-        "description": "WebGL template you can use.",
-        "path": "Samples~/Funtico WebGL Template"
-      }
-    ]
+    {
+      "displayName": "WebGL Template",
+      "description": "WebGL template you can use.",
+      "path": "Samples~/Funtico WebGL Template"
+    }
+  ]
 }
