@@ -59,9 +59,11 @@
         productName: "Funtico Frontend Unity SDK Demo",
         productVersion: "1.0",
         showBanner: unityShowBanner,
-        webglContextAttributes: {
-          perserveDrawingBuffer: true,
-        },
+      };
+
+      config.webglContextAttributes = {
+        "preserveDrawingBuffer": true,
+        "powerPreference": "2"
       };
 
       // By default, Unity keeps WebGL canvas render target size matched with
