@@ -55,7 +55,7 @@ The easiest way is to use the template that comes with the Funtico SDK package, 
 * Select the WebGL tab.
 * Open the Resolution and Presentation section.
 * From the WebGL Template dropdown menu, select the Funtico template.
-* Now, when you build your project, Unity will use this template automatically.
+* Now, when you build your project, Unity will use this template automatically. 
 
 #### Option B: Modify Your Own Custom Template
 
@@ -79,7 +79,7 @@ var myGameInstance = null;
 ```
 
 ##### 3. Assign the Unity Instance
-Finally, you need to assign the created Unity game instance to the variable from the previous step. Find the createUnityInstance function call in your file. Inside its .then() block, add myGameInstance = unityInstance;.
+You need to assign the created Unity game instance to the variable from the previous step. Find the createUnityInstance function call in your file. Inside its .then() block, add myGameInstance = unityInstance;.
 It will look like this:
 ```HTML
 createUnityInstance(canvas, config, (progress) => {
@@ -89,6 +89,18 @@ createUnityInstance(canvas, config, (progress) => {
   //... other logic
 });
 ```
+
+##### 4. Add perserving drawing buffer
+Finally, we need to add one more line, after Unity config creatio. Find definition of config- it will be multiline and will look like this: `var config = { xxx, }` 
+Add the following line under it to enable preserving the drawing buffer:
+
+```HTML
+config.webglContextAttributes = {
+"preserveDrawingBuffer": true,
+"powerPreference": "{{{ WEBGL_POWER_PREFERENCE }}}"
+};
+```
+
 
 ### 🎮 SDK Usage
 

@@ -71,9 +71,11 @@
         productName: {{{ JSON.stringify(PRODUCT_NAME) }}},
         productVersion: {{{ JSON.stringify(PRODUCT_VERSION) }}},
         showBanner: unityShowBanner,
-        webglContextAttributes: {
-          perserveDrawingBuffer: true,
-        },
+      };
+
+      config.webglContextAttributes = {
+        "preserveDrawingBuffer": true,
+        "powerPreference": "{{{ WEBGL_POWER_PREFERENCE }}}"
       };
 
       // By default, Unity keeps WebGL canvas render target size matched with
