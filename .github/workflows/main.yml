@@ -25,7 +25,7 @@ jobs:
       # 2. Update the package.json file with the new version
       - name: Update package.json version
         run: |
-          jq '.version = "${{ github.event.inputs.version }}"'Assets/FunticoSDK/package.json > tmp.$$.json && mv tmp.$$.json Assets/FunticoSDK/package.json
+          jq '.version = "${{ github.event.inputs.version }}"' Assets/FunticoSDK/package.json > tmp.$$.json && mv tmp.$$.json Assets/FunticoSDK/package.json
           echo "package.json updated to version ${{ github.event.inputs.version }}"
 
       # 3. Sync the Sample directories
